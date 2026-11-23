@@ -1,4 +1,5 @@
 import sys
+import numpy as np
 from PySide6.QtWidgets import (
     QApplication, QWidget, QVBoxLayout, QHBoxLayout,
     QPushButton, QFileDialog
@@ -80,6 +81,19 @@ class IceCreamWindow(QWidget):
         ax.set_xlabel("Temperature (°C)")
         ax.set_ylabel("Revenue ($)")
 
+        # חישוב קו המגמה הליניארי (פולינום מדרגה 1: y = m*x + b)
+        x = np.array(self.temperatures)
+        y = np.array(self.revenues)
+        m, b = np.polyfit(x, y, 1)
+
+        # חישוב נקודות הקו ושרטוט שלו באדום
+        trendline = m * x + b
+        ax.plot(x, trendline, color="red", linewidth=2)
+
+        # הצגת משוואת הקו על הגרף
+        equation = f"y = {m:.2f}x + {b:.2f}"
+        ax.text(0.05, 0.90, equation, transform=ax.transAxes, fontsize=12, color="red", fontweight="bold")
+        
         self.canvas.draw()
 if __name__ == "__main__":
     app = QApplication(sys.argv)
