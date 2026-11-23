@@ -23,7 +23,7 @@ class AboutWindow(QWidget):
         self.linkedin_label.setAlignment(Qt.AlignCenter)
         self.linkedin_label.setOpenExternalLinks(True) 
         layout.addWidget(self.linkedin_label)   
-        github_label = QLabel('<a href="https://github.com/eranvatter12381/HW4-GRADES">למאגר הקוד ב-GitHub</a>')
+        github_label = QLabel('<a href="https://github.com/eranvatter12381/HW-4-q2">למאגר הקוד ב-GitHub</a>')
         github_label.setOpenExternalLinks(True)
         layout.addWidget(github_label)  
         github_label.setAlignment(Qt.AlignCenter)
