@@ -39,15 +39,10 @@ class IceCreamWindow(QWidget):
         file_path, _ = QFileDialog.getOpenFileName(self, "בחר קובץ גלידה", "", "CSV Files (*.csv)")
         if not file_path:
             return
-
-        # איפוס הרשימות לפני טעינה חדשה
         self.temperatures = []
         self.revenues = []
-
         with open(file_path, "r", encoding="utf-8") as f:
             lines = f.readlines()
-
-        # מדלגים על שורת הכותרת (שורה 0)
         for line in lines[1:]:
             line = line.strip()
             if line == "":
@@ -55,46 +50,29 @@ class IceCreamWindow(QWidget):
             parts = line.split(",")
             self.temperatures.append(float(parts[0]))
             self.revenues.append(float(parts[1]))
-
-        # קריאה לפונקציה המציירת את הגרף
         self.plot_graph()
 
     def plot_graph(self):
         self.figure.clear()
         ax = self.figure.add_subplot(111)
-
-        # אם עדיין לא נטענו נתונים, לא מציירים כלום
         if not self.temperatures:
             ax.set_title("Load Ice Cream.csv to view data")
             self.canvas.draw()
             return
-
-        # גרף פיזור עם גודל נקודה 1 (טמפרטורה ב-X, רווחים ב-Y)
         ax.scatter(self.temperatures, self.revenues, s=1)
-
-        # העפת הקו העליון והימני של הריבוע המקיף
         ax.spines["top"].set_visible(False)
         ax.spines["right"].set_visible(False)
-
-        # כותרת וכותרות צירים
         ax.set_title("Ice Cream Revenue vs. Temperature")
         ax.set_xlabel("Temperature (°C)")
         ax.set_ylabel("Revenue ($)")
-
-        # חישוב קו המגמה הליניארי (פולינום מדרגה 1: y = m*x + b)
         x = np.array(self.temperatures)
         y = np.array(self.revenues)
         m, b = np.polyfit(x, y, 1)
-
-        # חישוב נקודות הקו ושרטוט שלו באדום
         trendline = m * x + b
         ax.plot(x, trendline, color="red", linewidth=2)
-
-        # הצגת משוואת הקו על הגרף
         equation = f"y = {m:.2f}x + {b:.2f}"
         ax.text(0.05, 0.90, equation, transform=ax.transAxes, fontsize=12, color="red", fontweight="bold")
-        
-        self.canvas.draw()
+                self.canvas.draw()
 if __name__ == "__main__":
     app = QApplication(sys.argv)
 
