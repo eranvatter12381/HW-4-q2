@@ -38,17 +38,49 @@ class IceCreamWindow(QWidget):
         file_path, _ = QFileDialog.getOpenFileName(self, "בחר קובץ גלידה", "", "CSV Files (*.csv)")
         if not file_path:
             return
-        # כאן נכתוב יחד את קריאת הקובץ
+
+        # איפוס הרשימות לפני טעינה חדשה
+        self.temperatures = []
+        self.revenues = []
+
+        with open(file_path, "r", encoding="utf-8") as f:
+            lines = f.readlines()
+
+        # מדלגים על שורת הכותרת (שורה 0)
+        for line in lines[1:]:
+            line = line.strip()
+            if line == "":
+                continue
+            parts = line.split(",")
+            self.temperatures.append(float(parts[0]))
+            self.revenues.append(float(parts[1]))
+
+        # קריאה לפונקציה המציירת את הגרף
+        self.plot_graph()
 
     def plot_graph(self):
-        """מתודה זמנית לציור גרף - נערוך אותה בשלב הבא"""
         self.figure.clear()
         ax = self.figure.add_subplot(111)
-        ax.plot([1, 2, 3, 4], [10, 20, 25, 30])
-        ax.set_title("Temporary Graph")
+
+        # אם עדיין לא נטענו נתונים, לא מציירים כלום
+        if not self.temperatures:
+            ax.set_title("Load Ice Cream.csv to view data")
+            self.canvas.draw()
+            return
+
+        # גרף פיזור עם גודל נקודה 1 (טמפרטורה ב-X, רווחים ב-Y)
+        ax.scatter(self.temperatures, self.revenues, s=1)
+
+        # העפת הקו העליון והימני של הריבוע המקיף
+        ax.spines["top"].set_visible(False)
+        ax.spines["right"].set_visible(False)
+
+        # כותרת וכותרות צירים
+        ax.set_title("Ice Cream Revenue vs. Temperature")
+        ax.set_xlabel("Temperature (°C)")
+        ax.set_ylabel("Revenue ($)")
+
         self.canvas.draw()
-
-
 if __name__ == "__main__":
     app = QApplication(sys.argv)
 
